@@ -1,18 +1,36 @@
 #include "Character.h"
 
-Character::Character(std::string name, int hp, int str)
-    : name(name), health(hp), strength(str), isDefending(false) {
+Character::Character(std::string name, int hp, int str, int def)
+    : name(name), health(hp), strength(str), defenseBonus(def), isDefending(false) {
 }
 
-void Character::defend() {
+void Character::defend(std::string* log) {
     isDefending = true;
-    std::cout << name << " verdedigt zich!\n";
+    if (log) {
+        *log += name + " kiest: Verdedigen\n";
+    }
 }
 
-void Character::takeDamage(int dmg) {
-    int finalDamage = isDefending ? dmg / 2 : dmg;
+void Character::takeDamage(int dmg, std::string* log) {
+    int finalDamage = dmg;
+
+    std::string msg;
+
+    if (isDefending) {
+        finalDamage -= defenseBonus;
+        if (finalDamage < 0) finalDamage = 0;
+
+        msg = name + " verdedigt zich en ontvangt " + std::to_string(finalDamage) + " schade.";
+    }
+    else {
+        msg = name + " ontvangt " + std::to_string(finalDamage) + " schade.";
+    }
+
     health -= finalDamage;
-    std::cout << name << " ontvangt " << finalDamage << " schade.\n";
+
+    if (log) {
+        *log += msg + "\n"; 
+    }
 }
 
 void Character::resetDefend() {
